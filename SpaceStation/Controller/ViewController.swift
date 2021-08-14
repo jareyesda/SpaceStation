@@ -70,6 +70,7 @@ class ViewController: UIViewController {
         spaceStationData = nil
         
         setSpaceStationArrayAndCache(url: urlString)
+        fetchStationImages()
         
     }
     
@@ -97,6 +98,7 @@ class ViewController: UIViewController {
 
             spaceStationsCache[pageNumber] = result
             spaceStationData = result
+            
             if pageNumber == 1 {
                 webURL = (spaceStationData?.next)!
 
@@ -110,6 +112,7 @@ class ViewController: UIViewController {
     //MARK: - Fetching images (Asynchronously)
     private func fetchStationImages() {
         if imageCache[pageNumber] == nil {
+            activity.startAnimating()
             networkManager.getStationImages(spaceStations) { [self] (images) in
                 DispatchQueue.main.async {
                     self.activity.stopAnimating()
@@ -122,17 +125,22 @@ class ViewController: UIViewController {
     
     //MARK: - Navigating to next page
     @IBAction func nextPage(_ sender: UIButton) {
+        
         pageNumber += 1
-        setPageView(webURL)
+        if spaceStationsCache[pageNumber] == nil {
+            setPageView(webURL)
+        }
         
     }
     
     @IBAction func previousPage(_ sender: UIButton) {
-        pageNumber -= 1
-        setPageView(webURL)
+        
+        pageNumber += 1
+        if spaceStationsCache[pageNumber] == nil {
+            setPageView(webURL)
+        }
     }
-    
-    
+
 }
 
 //MARK: - CollectionView Delegate Methods & Data Source
@@ -143,6 +151,10 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! SpaceStationCell
+        
+        cell.contentView.layer.cornerRadius = 10
+        cell.contentView.layer.borderWidth = 5
+        cell.contentView.layer.borderColor = UIColor.white.cgColor
         
         cell.name.text = spaceStationsCache[pageNumber]?.results[indexPath.row].name
         cell.country.text = spaceStationsCache[pageNumber]?.results[indexPath.row].owners.first?.name
