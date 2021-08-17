@@ -20,14 +20,10 @@ class ViewController: UIViewController {
     
     var spaceStations = [SpaceStationModel]()
     var spaceStationData: SpaceStations?
-    var spaceStationsCache = [Int: SpaceStations]() {
-        didSet {
-            collectionView.reloadData()
-        }
-    }
+    var spaceStationsCache = [Int: SpaceStations]()
         
-    var imageCache = [Int:[Int: UIImage]]() {
-        didSet {
+    var imageCache = [Int:[Int: UIImage]?]() {
+        didSet{
             collectionView.reloadData()
         }
     }
@@ -49,6 +45,7 @@ class ViewController: UIViewController {
         
         setPageView(webURL)
         fetchStationImages()
+        
     }
     
     //MARK: - Applying cell UI
@@ -61,7 +58,7 @@ class ViewController: UIViewController {
     private func setCellUI() {
         let layout = collectionView.collectionViewLayout as! UICollectionViewFlowLayout
         layout.minimumLineSpacing = 10
-        layout.minimumInteritemSpacing = 10
+        layout.minimumInteritemSpacing = 0
     }
     
     func setPageView(_ urlString: String) {
@@ -69,13 +66,13 @@ class ViewController: UIViewController {
         spaceStations.removeAll()
         spaceStationData = nil
         
-        setSpaceStationArrayAndCache(url: urlString)
+        setSpaceStationCache(url: urlString)
         fetchStationImages()
         
     }
     
     //MARK: - Network call for Space Station Data
-    private func setSpaceStationArrayAndCache(url: String) {
+    private func setSpaceStationCache(url: String) {
         networkManager.fetchSpaceStations(url) { [self] result in
             guard let results = result?.results else {
                 return
@@ -123,22 +120,59 @@ class ViewController: UIViewController {
         
     }
     
+    private func getSpaceStationData(for pageNumber: Int) -> [SpaceStationModel] {
+        var stations = [SpaceStationModel]()
+        
+        guard let cachedStations = spaceStationsCache[pageNumber]?.results else {
+            return stations
+        }
+        
+        for spaceStations in cachedStations {
+            stations.append(SpaceStationModel(
+                id: spaceStations.id,
+                name: spaceStations.name,
+                status: spaceStations.status,
+                type: spaceStations.type,
+                founded: spaceStations.founded,
+                deorbited: spaceStations.deorbited,
+                resultDescription: spaceStations.resultDescription,
+                orbit: spaceStations.orbit,
+                owners: spaceStations.owners,
+                imageURL: spaceStations.imageURL
+                )
+            )
+        }
+        
+        return stations
+    }
+    
     //MARK: - Navigating to next page
     @IBAction func nextPage(_ sender: UIButton) {
         
         pageNumber += 1
         if spaceStationsCache[pageNumber] == nil {
             setPageView(webURL)
+        } else {
+            spaceStations = getSpaceStationData(for: pageNumber)
         }
+        
+        nextButton.isEnabled = false
+        previousButton.isEnabled = true
         
     }
     
     @IBAction func previousPage(_ sender: UIButton) {
         
-        pageNumber += 1
+        pageNumber -= 1
         if spaceStationsCache[pageNumber] == nil {
             setPageView(webURL)
+        } else {
+            spaceStations = getSpaceStationData(for: pageNumber)
         }
+        
+        nextButton.isEnabled = true
+        previousButton.isEnabled = false
+        
     }
 
 }
@@ -152,19 +186,30 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! SpaceStationCell
         
-        cell.contentView.layer.cornerRadius = 10
-        cell.contentView.layer.borderWidth = 5
-        cell.contentView.layer.borderColor = UIColor.white.cgColor
-        
-        cell.name.text = spaceStationsCache[pageNumber]?.results[indexPath.row].name
-        cell.country.text = spaceStationsCache[pageNumber]?.results[indexPath.row].owners.first?.name
-        cell.image.image = imageCache[pageNumber]?[spaceStations[indexPath.row].id]
+        cell.name.text = spaceStations[indexPath.row].name
+        cell.country.text = spaceStations[indexPath.row].owners.first?.name
+        cell.image.image = imageCache[pageNumber]??[spaceStations[indexPath.row].id]
         
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print(webURL)
+        if let vc = storyboard?.instantiateViewController(identifier: "Detail") as? DetailViewController {
+            
+            guard let photo = imageCache[pageNumber]??[spaceStations[indexPath.row].id] else {
+                return
+            }
+            
+            vc.image = photo
+            vc.name = spaceStations[indexPath.row].name
+            vc.owner = spaceStations[indexPath.row].owners.first!.name
+            vc.founded = spaceStations[indexPath.row].founded
+            vc.status = spaceStations[indexPath.row].status.name
+            vc.resultDescription = spaceStations[indexPath.row].resultDescription
+            
+            navigationController?.pushViewController(vc, animated: true)
+
+        }
     }
     
     
