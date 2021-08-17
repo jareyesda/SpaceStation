@@ -44,11 +44,7 @@ struct NetworkManager {
         callback(spaceStations)
     }
     
-    // [Int:UIImage]
     func getStationImages(_ spaceStations: [SpaceStationModel], callback: @escaping ([Int:UIImage]) -> ()) {
-        
-//        var stationID: Int?
-//        var stationImage: UIImage?
         
         var stationImages = [Int:UIImage]()
         let group = DispatchGroup()
@@ -70,7 +66,6 @@ struct NetworkManager {
         }
         
         group.notify(queue: dispatchQueue) {
-//            callback(stationID, stationImage)
             callback(stationImages)
         }
     }

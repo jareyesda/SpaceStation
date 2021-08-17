@@ -122,6 +122,7 @@ class ViewController: UIViewController {
         
     }
     
+    //MARK: - Setting space station array dependant on page number
     private func getSpaceStationData(for pageNumber: Int) -> [SpaceStationModel] {
         var stations = [SpaceStationModel]()
         
@@ -163,6 +164,7 @@ class ViewController: UIViewController {
         
     }
     
+    //MARK: - Navigating to previous page
     @IBAction func previousPage(_ sender: UIButton) {
         
         pageNumber -= 1
