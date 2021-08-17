@@ -46,6 +46,8 @@ class ViewController: UIViewController {
         setPageView(webURL)
         fetchStationImages()
         
+        previousButton.isEnabled = false
+        
     }
     
     //MARK: - Applying cell UI
