@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		206F871B26CD9C6500B4D681 /* SpaceStationAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206F871A26CD9C6500B4D681 /* SpaceStationAPI.swift */; };
 		20CD12D926C5D3B000A1AB0E /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20CD12D826C5D3B000A1AB0E /* NetworkManager.swift */; };
 		20CD12DB26C5D3C200A1AB0E /* SpaceStationsData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20CD12DA26C5D3C200A1AB0E /* SpaceStationsData.swift */; };
 		20CD12E026C5D54600A1AB0E /* SpaceStationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20CD12DF26C5D54600A1AB0E /* SpaceStationCell.swift */; };
-		20CD12E226C5D65300A1AB0E /* SpaceStationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20CD12E126C5D65300A1AB0E /* SpaceStationModel.swift */; };
 		20EF6FFC26CC0E01002A3C4B /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20EF6FFB26CC0E01002A3C4B /* DetailViewController.swift */; };
 		20F3527226C5D04700F9AF06 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F3527126C5D04700F9AF06 /* AppDelegate.swift */; };
 		20F3527426C5D04700F9AF06 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F3527326C5D04700F9AF06 /* SceneDelegate.swift */; };
@@ -21,10 +21,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		206F871A26CD9C6500B4D681 /* SpaceStationAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceStationAPI.swift; sourceTree = "<group>"; };
 		20CD12D826C5D3B000A1AB0E /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		20CD12DA26C5D3C200A1AB0E /* SpaceStationsData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceStationsData.swift; sourceTree = "<group>"; };
 		20CD12DF26C5D54600A1AB0E /* SpaceStationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceStationCell.swift; sourceTree = "<group>"; };
-		20CD12E126C5D65300A1AB0E /* SpaceStationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceStationModel.swift; sourceTree = "<group>"; };
 		20EF6FFB26CC0E01002A3C4B /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		20F3526E26C5D04700F9AF06 /* SpaceStation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpaceStation.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		20F3527126C5D04700F9AF06 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -61,7 +61,7 @@
 			children = (
 				20CD12D826C5D3B000A1AB0E /* NetworkManager.swift */,
 				20CD12DA26C5D3C200A1AB0E /* SpaceStationsData.swift */,
-				20CD12E126C5D65300A1AB0E /* SpaceStationModel.swift */,
+				206F871A26CD9C6500B4D681 /* SpaceStationAPI.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -181,8 +181,8 @@
 				20F3527626C5D04700F9AF06 /* ViewController.swift in Sources */,
 				20F3527226C5D04700F9AF06 /* AppDelegate.swift in Sources */,
 				20F3527426C5D04700F9AF06 /* SceneDelegate.swift in Sources */,
+				206F871B26CD9C6500B4D681 /* SpaceStationAPI.swift in Sources */,
 				20CD12E026C5D54600A1AB0E /* SpaceStationCell.swift in Sources */,
-				20CD12E226C5D65300A1AB0E /* SpaceStationModel.swift in Sources */,
 				20EF6FFC26CC0E01002A3C4B /* DetailViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

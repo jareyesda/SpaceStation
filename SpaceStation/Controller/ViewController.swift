@@ -18,10 +18,12 @@ class ViewController: UIViewController {
     //MARK: - Variables/Constants
     let networkManager = NetworkManager()
     
-    var spaceStations = [SpaceStationModel]()
-    var spaceStationData: SpaceStations?
-    var spaceStationsCache = [Int: SpaceStations]()
+    // Data source for my CollectionView
+    var spaceStations = [SpaceStation]()
         
+    // Dictionary that handles the caching. Int conforms to the page number
+    var spaceStationsCache = [Int: [SpaceStation]]()
+    
     var imageCache = [Int:[Int: UIImage]?]() {
         didSet{
             collectionView.reloadData()
@@ -33,9 +35,7 @@ class ViewController: UIViewController {
             collectionView.reloadData()
         }
     }
-    
-    var webURL = "https://ll.thespacedevs.com/2.2.0/spacestation/?format=json&limit=10"
-            
+                    
     //MARK: - View Did Load
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,7 +43,13 @@ class ViewController: UIViewController {
         collectionView.delegate = self
         collectionView.dataSource = self
         
-        setPageView(webURL)
+        spaceStationsCache[pageNumber] = SpaceStationAPI.shared.getSpaceStations()
+        spaceStations = spaceStationsCache[pageNumber] ?? [SpaceStation]()
+        
+        SpaceStationAPI.shared.updateWebURL(pageNumber) { url in
+            return
+        }
+        
         fetchStationImages()
         
         previousButton.isEnabled = false
@@ -63,56 +69,30 @@ class ViewController: UIViewController {
         layout.minimumInteritemSpacing = 0
     }
     
-    func setPageView(_ urlString: String) {
+    func setPageView() {
         // reset data
         spaceStations.removeAll()
-        spaceStationData = nil
         
-        setSpaceStationCache(url: urlString)
+        setSpaceStationCache()
+        
+        // Populate my spaceStations array via the cache.
+        spaceStations = spaceStationsCache[pageNumber] ?? [SpaceStation]()
+        
+        // Fetch and cache images
         fetchStationImages()
         
     }
     
-    //MARK: - Network call for Space Station Data
-    private func setSpaceStationCache(url: String) {
-        networkManager.fetchSpaceStations(url) { [self] result in
-            guard let results = result?.results else {
-                return
-            }
-            for result in results {
-                spaceStations.append(
-                    SpaceStationModel(
-                        id: result.id,
-                        name: result.name,
-                        status: result.status,
-                        type: result.type,
-                        founded: result.founded,
-                        deorbited: result.deorbited,
-                        resultDescription: result.resultDescription,
-                        orbit: result.orbit,
-                        owners: result.owners,
-                        imageURL: result.imageURL)
-                )
-            }
-
-            spaceStationsCache[pageNumber] = result
-            spaceStationData = result
-            
-            if pageNumber == 1 {
-                webURL = (spaceStationData?.next)!
-
-            } else if pageNumber == 2 {
-                webURL = (spaceStationData?.previous)!
-            }
-
-        }
+    //MARK: - Setting cache for Space Station data
+    private func setSpaceStationCache() {
+        spaceStationsCache[pageNumber] = SpaceStationAPI.shared.getSpaceStations()
     }
     
-    //MARK: - Fetching images (Asynchronously)
+    //MARK: - Fetching images (Asynchronously) and setting its cache
     private func fetchStationImages() {
         if imageCache[pageNumber] == nil {
             activity.startAnimating()
-            networkManager.getStationImages(spaceStations) { [self] (images) in
+            networkManager.getStationImages(spaceStationsCache[pageNumber] ?? [SpaceStation]()) { [self] (images) in
                 DispatchQueue.main.async {
                     self.activity.stopAnimating()
                     imageCache[pageNumber] = images
@@ -121,42 +101,14 @@ class ViewController: UIViewController {
         }
         
     }
-    
-    //MARK: - Setting space station array dependant on page number
-    private func getSpaceStationData(for pageNumber: Int) -> [SpaceStationModel] {
-        var stations = [SpaceStationModel]()
-        
-        guard let cachedStations = spaceStationsCache[pageNumber]?.results else {
-            return stations
-        }
-        
-        for spaceStations in cachedStations {
-            stations.append(SpaceStationModel(
-                id: spaceStations.id,
-                name: spaceStations.name,
-                status: spaceStations.status,
-                type: spaceStations.type,
-                founded: spaceStations.founded,
-                deorbited: spaceStations.deorbited,
-                resultDescription: spaceStations.resultDescription,
-                orbit: spaceStations.orbit,
-                owners: spaceStations.owners,
-                imageURL: spaceStations.imageURL
-                )
-            )
-        }
-        
-        return stations
-    }
-    
     //MARK: - Navigating to next page
     @IBAction func nextPage(_ sender: UIButton) {
         
         pageNumber += 1
         if spaceStationsCache[pageNumber] == nil {
-            setPageView(webURL)
+            setPageView()
         } else {
-            spaceStations = getSpaceStationData(for: pageNumber)
+            spaceStations = spaceStationsCache[pageNumber]!
         }
         
         nextButton.isEnabled = false
@@ -169,9 +121,9 @@ class ViewController: UIViewController {
         
         pageNumber -= 1
         if spaceStationsCache[pageNumber] == nil {
-            setPageView(webURL)
+            setPageView()
         } else {
-            spaceStations = getSpaceStationData(for: pageNumber)
+            spaceStations = spaceStationsCache[pageNumber]!
         }
         
         nextButton.isEnabled = true
@@ -199,18 +151,18 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let vc = storyboard?.instantiateViewController(identifier: "Detail") as? DetailViewController {
-            
+
             guard let photo = imageCache[pageNumber]??[spaceStations[indexPath.row].id] else {
                 return
             }
-            
+
             vc.image = photo
             vc.name = spaceStations[indexPath.row].name
             vc.owner = spaceStations[indexPath.row].owners.first!.name
             vc.founded = spaceStations[indexPath.row].founded
             vc.status = spaceStations[indexPath.row].status.name
             vc.resultDescription = spaceStations[indexPath.row].resultDescription
-            
+
             navigationController?.pushViewController(vc, animated: true)
 
         }

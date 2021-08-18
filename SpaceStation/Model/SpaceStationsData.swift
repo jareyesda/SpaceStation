@@ -6,15 +6,15 @@
 import Foundation
 
 // MARK: - SpaceStations
-struct SpaceStations: Codable {
+struct Response: Codable {
     let count: Int
     let next: String?
     let previous: String?
-    let results: [Result]
+    let results: [SpaceStation]
 }
 
 // MARK: - Result
-struct Result: Codable {
+struct SpaceStation: Codable {
     let id: Int
     let url: String
     let name: String

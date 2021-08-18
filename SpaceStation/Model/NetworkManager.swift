@@ -10,6 +10,8 @@ import UIKit
 
 struct NetworkManager {
     
+    static let shared = NetworkManager()
+    
     private let dispatchQueue = DispatchQueue(label: "Image Thread")
     
     // Fetch data
@@ -25,26 +27,36 @@ struct NetworkManager {
     }
     
     // Parse JSON
-    private func parse(_ json: Data) ->  SpaceStations? {
-        var retVal: SpaceStations?
+    private func parse(_ json: Data) ->  Response? {
+        var retVal: Response?
         let decoder = JSONDecoder()
-        if let jsonData = try? decoder.decode(SpaceStations.self, from: json) {
+        if let jsonData = try? decoder.decode(Response.self, from: json) {
             retVal = jsonData
         }
         return retVal
     }
     
     // Fetch space stations for given API call
-    func fetchSpaceStations(_ urlString: String, callback: @escaping (SpaceStations?) -> ()) {
-        var spaceStations: SpaceStations?
+    func fetchSpaceStations(_ urlString: String, callback: @escaping ([SpaceStation]) -> ()) {
+        var spaceStations = [SpaceStation]()
         
         let jsonData = fetchJSON(urlString)
-        spaceStations = parse(jsonData)
+        spaceStations = parse(jsonData)?.results ?? [SpaceStation]()
         
         callback(spaceStations)
     }
     
-    func getStationImages(_ spaceStations: [SpaceStationModel], callback: @escaping ([Int:UIImage]) -> ()) {
+    // Fetch response for given API call
+    func fetchResponse(_ urlString: String, callback: @escaping (Response?) -> ()) {
+        var response: Response?
+        
+        let jsonData = fetchJSON(urlString)
+        response = parse(jsonData)
+        
+        callback(response)
+    }
+    
+    func getStationImages(_ spaceStations: [SpaceStation], callback: @escaping ([Int:UIImage]) -> ()) {
         
         var stationImages = [Int:UIImage]()
         let group = DispatchGroup()
