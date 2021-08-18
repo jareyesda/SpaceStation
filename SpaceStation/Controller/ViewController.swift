@@ -46,9 +46,7 @@ class ViewController: UIViewController {
         spaceStationsCache[pageNumber] = SpaceStationAPI.shared.getSpaceStations()
         spaceStations = spaceStationsCache[pageNumber] ?? [SpaceStation]()
         
-        SpaceStationAPI.shared.updateWebURL(pageNumber) { url in
-            return
-        }
+        SpaceStationAPI.shared.updateWebURL(pageNumber)
         
         fetchStationImages()
         
@@ -70,9 +68,10 @@ class ViewController: UIViewController {
     }
     
     func setPageView() {
-        // reset data
+        // Reset data
         spaceStations.removeAll()
         
+        // Set cache
         setSpaceStationCache()
         
         // Populate my spaceStations array via the cache.

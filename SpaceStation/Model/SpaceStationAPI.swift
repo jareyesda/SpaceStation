@@ -23,7 +23,7 @@ class SpaceStationAPI {
         return spaceStations
     }
     
-    func updateWebURL(_ pageNumber: Int, completion: @escaping (String) -> ()) {
+    func updateWebURL(_ pageNumber: Int) {
         if pageNumber == 1 {
             NetworkManager.shared.fetchResponse(webURL) { response in
                 self.webURL = (response?.next)!
