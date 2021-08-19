@@ -37,13 +37,13 @@ struct NetworkManager {
     }
     
     // Fetch space stations for given API call
-    func fetchSpaceStations(_ urlString: String, callback: @escaping ([SpaceStation]) -> ()) {
-        var spaceStations = [SpaceStation]()
+    func fetchSpaceStations(_ urlString: String, callback: @escaping (Response?) -> ()) {
+        var response: Response?
         
         let jsonData = fetchJSON(urlString)
-        spaceStations = parse(jsonData)?.results ?? [SpaceStation]()
+        response = parse(jsonData)
         
-        callback(spaceStations)
+        callback(response)
     }
     
     // Fetch response for given API call
