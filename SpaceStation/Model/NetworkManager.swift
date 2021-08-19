@@ -56,9 +56,9 @@ struct NetworkManager {
         callback(response)
     }
     
-    func getStationImages(_ spaceStations: [SpaceStation], callback: @escaping ([Int:UIImage]) -> ()) {
+    func getStationImages(_ spaceStations: [SpaceStation], callback: @escaping ([UIImage]) -> ()) {
         
-        var stationImages = [Int:UIImage]()
+        var stationImages = [UIImage]()
         let group = DispatchGroup()
         
         for spaceStation in spaceStations {
@@ -71,7 +71,7 @@ struct NetworkManager {
                     return
                 }
                 
-                stationImages[spaceStation.id] = (UIImage(data: data)!)
+                stationImages.append((UIImage(data: data)!))
                 
                 group.leave()
             }
