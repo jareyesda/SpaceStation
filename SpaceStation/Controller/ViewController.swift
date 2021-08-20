@@ -66,22 +66,24 @@ class ViewController: UIViewController {
     
     
     func updatePage() {
-        SpaceStationAPI.shared.getSpaceStations(page: pageNumber, completion: { result in
+        SpaceStationAPI.shared.getSpaceStations(page: pageNumber, completion: { (result) in
             switch result {
+            
             case .success(let spaceStations):
                 DispatchQueue.main.async {
                     self.spaceStations = spaceStations
                 }
+                
+                SpaceStationAPI.shared.getStationImages(page: self.pageNumber, spaceStations: spaceStations) { images in
+                    DispatchQueue.main.async {
+                        self.stationImages = images
+                    }
+                }
+                
             case .failure(let error):
                 print(error)
             }
         })
-        
-        SpaceStationAPI.shared.getStationImages(page: pageNumber, spaceStations: spaceStations) { images in
-            DispatchQueue.main.async {
-                self.stationImages = images
-            }
-        }
 
     }
 
@@ -125,11 +127,12 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
 //        cell.image.image = stationImages[indexPath.row]
         
         return cell
+        
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print(stationImages)
-        print(SpaceStationAPI.shared.imageCache)
 //        if let vc = storyboard?.instantiateViewController(identifier: "Detail") as? DetailViewController {
 //
 //            guard let photo = stationImages[indexPath.row] else {

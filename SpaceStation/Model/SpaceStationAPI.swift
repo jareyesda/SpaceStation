@@ -30,6 +30,7 @@ class SpaceStationAPI {
         
         if let cachedResponse = spaceStationCache[page] {
             completion(.success(cachedResponse?.results ?? []))
+            
         }
         
         if page == 0 {
