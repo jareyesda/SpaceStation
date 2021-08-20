@@ -13,7 +13,7 @@ class SpaceStationAPI {
     static let shared = SpaceStationAPI()
     
     var spaceStationCache = [Int : Response?]()
-    var imageCache = [Int : UIImage]()
+    var imageCache = [Int : [UIImage]]()
     var spaceStationsOnPage = [Int : [Int]]()
     
     var webURL = "https://ll.thespacedevs.com/2.2.0/spacestation/?format=json&limit=10"
@@ -54,39 +54,19 @@ class SpaceStationAPI {
     
     
     // Fetch space station images from API and add to cache
-    func fetchStationImages(page: Int, completion: @escaping ([UIImage]) -> Void) {
+    func getStationImages(page: Int, spaceStations: [SpaceStation], completion: @escaping ([UIImage]) -> Void) {
         
-        if let spaceStations = spaceStationCache[pageNumber]??.results {
-            NetworkManager.shared.getStationImages(spaceStations) { [self] images in
-                for (spaceStation, image) in zip(spaceStations, images) {
-                    imageCache[spaceStation.id] = image
-                }
-            }
-
-        
-        }
-    }
-        
-        
-//        NetworkManager.shared.getStationImages(spaceStations) { [self] images in
-//            for (spaceStation, image) in zip(spaceStations, images) {
-//                imageCache[spaceStation.id] = image
-//            }
-//        }
-//    }
-    
-    // Return URL for the next/previous page
-    func updateWebURL(_ pageNumber: Int) {
-        if pageNumber == 1 {
-            NetworkManager.shared.fetchResponse(webURL) { response in
-                self.webURL = (response?.next)!
-            }
-        } else if pageNumber == 2 {
-            NetworkManager.shared.fetchResponse(webURL) { response in
-                self.webURL = (response?.previous)!
+        if let cachedResponse = imageCache[page] {
+            completion(cachedResponse)
+            print("Images fetched from cache")
+        } else {
+            NetworkManager.shared.getStationImages(spaceStations) { images in
+                self.imageCache[page] = images
+                print("Getting new images")
+                completion(images)
             }
         }
+        
     }
-    
     
 }

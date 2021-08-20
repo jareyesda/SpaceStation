@@ -38,22 +38,26 @@ struct NetworkManager {
     
     // Fetch space stations for given API call
     func fetchSpaceStations(_ urlString: String, callback: @escaping (Response?) -> ()) {
-        var response: Response?
-        
-        let jsonData = fetchJSON(urlString)
-        response = parse(jsonData)
-        
-        callback(response)
+        DispatchQueue.global().async {
+            var response: Response?
+            
+            let jsonData = fetchJSON(urlString)
+            response = parse(jsonData)
+            
+            callback(response)
+        }
     }
     
     // Fetch response for given API call
     func fetchResponse(_ urlString: String, callback: @escaping (Response?) -> ()) {
-        var response: Response?
-        
-        let jsonData = fetchJSON(urlString)
-        response = parse(jsonData)
-        
-        callback(response)
+        DispatchQueue.global().async {
+            var response: Response?
+            
+            let jsonData = fetchJSON(urlString)
+            response = parse(jsonData)
+            
+            callback(response)
+        }
     }
     
     func getStationImages(_ spaceStations: [SpaceStation], callback: @escaping ([UIImage]) -> ()) {

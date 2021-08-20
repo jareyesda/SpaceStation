@@ -77,9 +77,12 @@ class ViewController: UIViewController {
             }
         })
         
-        SpaceStationAPI.shared.fetchStationImages(page: pageNumber) { images in
-            self.stationImages = 
+        SpaceStationAPI.shared.getStationImages(page: pageNumber, spaceStations: spaceStations) { images in
+            DispatchQueue.main.async {
+                self.stationImages = images
+            }
         }
+
     }
 
     //MARK: - Navigating to next page
@@ -126,6 +129,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print(stationImages)
+        print(SpaceStationAPI.shared.imageCache)
 //        if let vc = storyboard?.instantiateViewController(identifier: "Detail") as? DetailViewController {
 //
 //            guard let photo = stationImages[indexPath.row] else {
