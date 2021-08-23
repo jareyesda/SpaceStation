@@ -87,7 +87,7 @@ class SpaceStationAPI {
     // Fetch space station images from API and add to cache
     func getStationImages(spaceStations: [SpaceStation], completion: @escaping ([Int : UIImage]) -> Void) {
         var imageDictionary = [Int : UIImage]()
-        
+
         NetworkManager.shared.getStationImages(spaceStations) { images in
             for (spaceStation, image) in zip(spaceStations, images) {
                 imageDictionary[spaceStation.id] = image
@@ -96,7 +96,7 @@ class SpaceStationAPI {
         }
 
         completion(imageDictionary)
-        
+
     }
     
 }

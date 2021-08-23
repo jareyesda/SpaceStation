@@ -21,15 +21,10 @@ class ViewController: UIViewController {
     // Data source for CollectionView
     var spaceStations = [SpaceStation]() {
         didSet {
+            updateImages(spaceStations: self.spaceStations)
             collectionView.reloadData()
         }
     }
-    
-//    var stationImages = [UIImage]() {
-//        didSet {
-//            collectionView.reloadData()
-//        }
-//    }
     
     var stationImages = [Int : UIImage]() {
         didSet {
@@ -79,7 +74,6 @@ class ViewController: UIViewController {
             case .success(let spaceStations):
                 DispatchQueue.main.async {
                     self.spaceStations = spaceStations
-                    self.updateImages(spaceStations: self.spaceStations)
                 }
                 
             case .failure(let error):
@@ -87,6 +81,7 @@ class ViewController: UIViewController {
             }
         })
         
+//        updateImages(spaceStations: self.spaceStations)
 
     }
     
