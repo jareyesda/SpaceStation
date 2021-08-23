@@ -21,7 +21,6 @@ class ViewController: UIViewController {
     // Data source for CollectionView
     var spaceStations = [SpaceStation]() {
         didSet {
-            updateImages(spaceStations: self.spaceStations)
             collectionView.reloadData()
         }
     }
@@ -47,8 +46,8 @@ class ViewController: UIViewController {
         collectionView.dataSource = self
         
         updatePage()
-        updateImages(spaceStations: spaceStations)
-        
+//        updateImages()
+
         previousButton.isEnabled = false
         
     }
@@ -74,22 +73,19 @@ class ViewController: UIViewController {
             case .success(let spaceStations):
                 DispatchQueue.main.async {
                     self.spaceStations = spaceStations
+                    self.updateImages()
                 }
                 
             case .failure(let error):
                 print(error)
             }
         })
-        
-//        updateImages(spaceStations: self.spaceStations)
 
     }
     
-    func updateImages(spaceStations: [SpaceStation]) {
+    func updateImages() {
         SpaceStationAPI.shared.getStationImages(spaceStations: spaceStations) { imageDict in
             DispatchQueue.main.async {
-                print("current space station array is: \(self.spaceStations)")
-                print("current images are: \(self.stationImages)")
                 self.stationImages = imageDict
             }
         }
@@ -101,6 +97,7 @@ class ViewController: UIViewController {
         pageNumber += 1
         SpaceStationAPI.shared.pageNumber = pageNumber
         updatePage()
+//        updateImages()
         
         nextButton.isEnabled = false
         previousButton.isEnabled = true
@@ -113,6 +110,7 @@ class ViewController: UIViewController {
         pageNumber -= 1
         SpaceStationAPI.shared.pageNumber = pageNumber
         updatePage()
+//        updateImages()
         
         nextButton.isEnabled = true
         previousButton.isEnabled = false
@@ -142,23 +140,24 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print(stationImages)
-//        if let vc = storyboard?.instantiateViewController(identifier: "Detail") as? DetailViewController {
-//
-//            guard let photo = stationImages[indexPath.row] else {
-//                return
-//            }
-//
-//            vc.image = photo
-//            vc.name = spaceStations[indexPath.row].name
-//            vc.owner = spaceStations[indexPath.row].owners.first!.name
-//            vc.founded = spaceStations[indexPath.row].founded
-//            vc.status = spaceStations[indexPath.row].status.name
-//            vc.resultDescription = spaceStations[indexPath.row].resultDescription
-//
-//            navigationController?.pushViewController(vc, animated: true)
-//
-//        }
+        if let vc = storyboard?.instantiateViewController(identifier: "Detail") as? DetailViewController {
+            
+            let spaceStation = spaceStations[indexPath.row]
+
+            guard let photo = stationImages[spaceStation.id] else {
+                return
+            }
+
+            vc.image = photo
+            vc.name = spaceStation.name
+            vc.owner = spaceStation.owners.first!.name
+            vc.founded = spaceStation.founded
+            vc.status = spaceStation.status.name
+            vc.resultDescription = spaceStation.resultDescription
+
+            navigationController?.pushViewController(vc, animated: true)
+
+        }
     }
     
     

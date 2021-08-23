@@ -60,6 +60,26 @@ struct NetworkManager {
         }
     }
     
+    func getStationImage(urlString: String, completion: @escaping (UIImage) -> ()) {
+        
+        guard let url = URL(string: urlString) else {
+            return
+        }
+        
+        URLSession.shared.dataTask(with: url) { (data, response, error) in
+            if error == nil {
+                guard let data = data else {
+                    return
+                }
+                let image = UIImage(data: data)
+                completion(image!)
+            } else {
+                print(error?.localizedDescription as Any)
+            }
+        }.resume()
+        
+    }
+    
     func getStationImages(_ spaceStations: [SpaceStation], callback: @escaping ([UIImage]) -> ()) {
 
         var stationImages = [UIImage]()

@@ -53,50 +53,16 @@ class SpaceStationAPI {
         }
     }
     
-//    func fetchStationImages(spaceStations: [SpaceStation]) -> [Int : UIImage] {
-//        var stationImages = [UIImage]()
-//        var imageDict = [Int : UIImage]()
-//
-//        NetworkManager.shared.getStationImages(spaceStations) { images in
-//            stationImages = images
-//        }
-//
-//        for (spaceStation, image) in zip(spaceStations, stationImages) {
-//            imageDict[spaceStation.id] = image
-//        }
-//
-//        return imageDict
-//
-//    }
-    
-//    func getStationImages(spaceStations: [SpaceStation], completion: @escaping ([Int : UIImage]) -> Void) {
-//
-//        var stationImages = [UIImage]()
-//
-//        stationImages = NetworkManager.shared.fetchStationImages(spaceStations)
-//
-//        for (spaceStation, stationImage) in zip(spaceStations, stationImages) {
-//            self.imageCache[spaceStation.id] = stationImage
-//        }
-//
-//        completion(imageCache)
-//
-//    }
-    
-    
-    // Fetch space station images from API and add to cache
-    func getStationImages(spaceStations: [SpaceStation], completion: @escaping ([Int : UIImage]) -> Void) {
-        var imageDictionary = [Int : UIImage]()
-
-        NetworkManager.shared.getStationImages(spaceStations) { images in
-            for (spaceStation, image) in zip(spaceStations, images) {
-                imageDictionary[spaceStation.id] = image
+    func getStationImages(spaceStations: [SpaceStation], completion: @escaping ([Int : UIImage]) -> ()) {
+        
+        for spaceStation in spaceStations {
+            NetworkManager.shared.getStationImage(urlString: spaceStation.imageURL) { image in
                 self.imageCache[spaceStation.id] = image
             }
         }
-
-        completion(imageDictionary)
-
+        
+        completion(imageCache)
+        
     }
     
 }
