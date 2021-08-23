@@ -53,16 +53,38 @@ class SpaceStationAPI {
         }
     }
     
+//    func getStationImages(spaceStations: [SpaceStation], completion: @escaping ([Int : UIImage]) -> ()) {
+//
+//        var imageDict = [Int : UIImage]()
+//
+//        for spaceStation in spaceStations {
+//            NetworkManager.shared.getStationImage(urlString: spaceStation.imageURL) { image in
+//                self.imageCache[spaceStation.id] = image
+//                imageDict[spaceStation.id] = image
+//            }
+//        }
+//
+//        completion(imageCache)
+//
+//    }
+    
     func getStationImages(spaceStations: [SpaceStation], completion: @escaping ([Int : UIImage]) -> ()) {
-        
-        for spaceStation in spaceStations {
-            NetworkManager.shared.getStationImage(urlString: spaceStation.imageURL) { image in
-                self.imageCache[spaceStation.id] = image
+            
+            let group = DispatchGroup()
+            
+            for spaceStation in spaceStations {
+                group.enter()
+                DispatchQueue.global().async {
+                    NetworkManager.shared.getImageFromURL(urlString: spaceStation.imageURL) { image in
+                        self.imageCache[spaceStation.id] = image
+                        group.leave()
+                    }
+                }
+            }
+            
+            group.notify(queue: DispatchQueue.global()) {
+                completion(self.imageCache)
             }
         }
-        
-        completion(imageCache)
-        
-    }
     
 }

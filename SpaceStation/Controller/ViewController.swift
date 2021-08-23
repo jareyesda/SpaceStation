@@ -46,8 +46,7 @@ class ViewController: UIViewController {
         collectionView.dataSource = self
         
         updatePage()
-//        updateImages()
-
+        
         previousButton.isEnabled = false
         
     }
@@ -74,6 +73,7 @@ class ViewController: UIViewController {
                 DispatchQueue.main.async {
                     self.spaceStations = spaceStations
                     self.updateImages()
+                    print(SpaceStationAPI.shared.imageCache)
                 }
                 
             case .failure(let error):
@@ -97,7 +97,6 @@ class ViewController: UIViewController {
         pageNumber += 1
         SpaceStationAPI.shared.pageNumber = pageNumber
         updatePage()
-//        updateImages()
         
         nextButton.isEnabled = false
         previousButton.isEnabled = true
@@ -110,7 +109,6 @@ class ViewController: UIViewController {
         pageNumber -= 1
         SpaceStationAPI.shared.pageNumber = pageNumber
         updatePage()
-//        updateImages()
         
         nextButton.isEnabled = true
         previousButton.isEnabled = false

@@ -60,7 +60,7 @@ struct NetworkManager {
         }
     }
     
-    func getStationImage(urlString: String, completion: @escaping (UIImage) -> ()) {
+    func getImageFromURL(urlString: String, completion: @escaping (UIImage) -> ()) {
         
         guard let url = URL(string: urlString) else {
             return
