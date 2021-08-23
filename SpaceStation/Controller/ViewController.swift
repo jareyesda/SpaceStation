@@ -25,7 +25,13 @@ class ViewController: UIViewController {
         }
     }
     
-    var stationImages = [UIImage?]() {
+//    var stationImages = [UIImage]() {
+//        didSet {
+//            collectionView.reloadData()
+//        }
+//    }
+    
+    var stationImages = [Int : UIImage]() {
         didSet {
             collectionView.reloadData()
         }
@@ -46,6 +52,7 @@ class ViewController: UIViewController {
         collectionView.dataSource = self
         
         updatePage()
+        updateImages(spaceStations: spaceStations)
         
         previousButton.isEnabled = false
         
@@ -72,19 +79,25 @@ class ViewController: UIViewController {
             case .success(let spaceStations):
                 DispatchQueue.main.async {
                     self.spaceStations = spaceStations
-                }
-                
-                SpaceStationAPI.shared.getStationImages(page: self.pageNumber, spaceStations: spaceStations) { images in
-                    DispatchQueue.main.async {
-                        self.stationImages = images
-                    }
+                    self.updateImages(spaceStations: self.spaceStations)
                 }
                 
             case .failure(let error):
                 print(error)
             }
         })
+        
 
+    }
+    
+    func updateImages(spaceStations: [SpaceStation]) {
+        SpaceStationAPI.shared.getStationImages(spaceStations: spaceStations) { imageDict in
+            DispatchQueue.main.async {
+                print("current space station array is: \(self.spaceStations)")
+                print("current images are: \(self.stationImages)")
+                self.stationImages = imageDict
+            }
+        }
     }
 
     //MARK: - Navigating to next page
@@ -122,9 +135,11 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! SpaceStationCell
         
-        cell.name.text = spaceStations[indexPath.row].name
-        cell.country.text = spaceStations[indexPath.row].owners.first?.name
-//        cell.image.image = stationImages[indexPath.row]
+        let spaceStation = spaceStations[indexPath.row]
+        
+        cell.name.text = spaceStation.name
+        cell.country.text = spaceStation.owners.first?.name
+        cell.image.image = stationImages[spaceStation.id]
         
         return cell
         

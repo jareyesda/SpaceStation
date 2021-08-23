@@ -61,10 +61,10 @@ struct NetworkManager {
     }
     
     func getStationImages(_ spaceStations: [SpaceStation], callback: @escaping ([UIImage]) -> ()) {
-        
+
         var stationImages = [UIImage]()
         let group = DispatchGroup()
-        
+
         for spaceStation in spaceStations {
             group.enter()
             dispatchQueue.async {
@@ -74,15 +74,40 @@ struct NetworkManager {
                 guard let data = try? Data(contentsOf: url) else {
                     return
                 }
-                
+
                 stationImages.append((UIImage(data: data)!))
-                
+
                 group.leave()
             }
         }
-        
+
         group.notify(queue: dispatchQueue) {
             callback(stationImages)
         }
     }
+    
+//    func fetchStationImages(_ spaceStations: [SpaceStation]) -> [UIImage] {
+//
+//        var stationImages = [UIImage]()
+//
+//        for spaceStation in spaceStations {
+//            guard let url = URL(string: spaceStation.imageURL) else {
+//                return []
+//            }
+//            URLSession.shared.dataTask(with: url) { (data, response, error) in
+//                if error == nil {
+//                    guard let data = data else {
+//                        return
+//                    }
+//                    if let image = UIImage(data: data) {
+//                        stationImages.append(image)
+//                    }
+//
+//                }
+//            }.resume()
+//        }
+//        print(stationImages)
+//        return stationImages
+//    }
+    
 }
